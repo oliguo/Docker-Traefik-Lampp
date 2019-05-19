@@ -1,0 +1,4 @@
+#dev.oli local vol to docker-mysql
+[mysql]
+# Set utf8mb4 by default: https://mathiasbynens.be/notes/mysql-utf8mb4
+default-character-set = utf8mb4

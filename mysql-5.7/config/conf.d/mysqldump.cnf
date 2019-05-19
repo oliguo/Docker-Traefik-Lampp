@@ -1,0 +1,5 @@
+#dev.oli local vol to docker-mysql
+[mysqldump]
+quick
+quote-names
+max_allowed_packet      = 16M

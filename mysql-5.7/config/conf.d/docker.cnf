@@ -1,0 +1,4 @@
+#dev.oli local vol to docker-mysql
+[mysqld]
+skip-host-cache
+skip-name-resolve
