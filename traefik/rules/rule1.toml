@@ -1,0 +1,21 @@
+[backends]
+
+[backends.abc001]
+[backends.abc001.servers.server1]
+url = "http://123.123.123.123:10001"
+[backends.abc002]
+[backends.abc002.servers.server1]
+url = "http://123.123.123.123:10002" #point to https part
+
+[frontends]
+
+[frontends.abc001]
+backend = "abc001"
+passHostHeader = true
+[frontends.abc001.routes.route1]
+rule = "Host:abc001.abc.com"
+[frontends.abc002]
+backend = "abc002"
+passHostHeader = true
+[frontends.abc002.routes.route1]
+rule = "Host:abc002.abc.com"
