@@ -5,3 +5,8 @@ Building the Lampp(alpine-apache-mysql5-php5) with Traefik
 ```
 docker network create web
 ```
+
+## Run docker-compose
+```
+docker-compose up -d --force-recreate
+```
