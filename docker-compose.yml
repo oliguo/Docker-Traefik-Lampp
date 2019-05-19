@@ -1,1 +1,75 @@
-
+version: '3'
+services:
+    traefik:
+        image: traefik
+        restart: always
+        command: --api --docker # Enables the web UI and tells Traefik to listen to docker
+        ports:
+            - 8080:8080
+            - 80:80
+            - 443:443
+        networks:
+            - web
+        volumes:
+            - '/var/run/docker.sock:/var/run/docker.sock'
+            - './traefik/certs:/opt/traefik/certs'
+            - './traefik/traefik.toml:/traefik.toml'
+            - './traefik/acme.json:/acme.json'
+            - './traefik/log:/opt/traefik/log'
+            - './traefik/rules:/opt/traefik/rules'
+        container_name: traefik
+    mysql:
+        networks:
+            - web
+        ports:
+            - '3306:3306'
+        container_name: mysql-5.7
+        restart: always
+        volumes:
+            - './mysql-5.7/data:/var/lib/mysql'
+            - './mysql-5.7/config/mysql.conf.d:/etc/mysql/mysql.conf.d'
+            - './mysql-5.7/config/conf.d:/etc/mysql/conf.d'
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+        image: 'mysql:5.7'
+    phpmyadmin:
+        networks:
+            - web
+        ports:
+            - '9090:80'
+        container_name: phpmyadmin-4.7
+        restart: always
+        environment:
+            - PMA_ARBITRARY=1
+        volumes:
+            - './phpmyadmin-4.7/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php'
+        image: 'phpmyadmin/phpmyadmin:4.7'
+        links:
+          - mysql:mysql-5.7
+    alpine-apache-php5:
+        networks:
+            - web
+        ports:
+            - '10001:80'
+            - '10002:443'
+        container_name: abc001
+        restart: always
+        volumes:
+            - './alpine-apache-php5/www:/var/www/localhost/htdocs'
+            - './alpine-apache-php5/config/apache2/httpd.conf:/etc/apache2/httpd.conf'
+            - './alpine-apache-php5/config/apache2/conf.d:/etc/apache2/conf.d'
+            - './alpine-apache-php5/config/php5/php.ini:/etc/php5/php.ini'
+            - './alpine-apache-php5/log/apache2:/var/log/apache2'
+            - './alpine-apache-php5/log/php5:/var/log/php5'
+        image: oliguo/alpine-apache-php5
+        labels:
+            - "traefik.docker.network=web"
+            - "traefik.enable=true"
+            - "traefik.basic.frontend.rule=Host:abc001.com"
+            - "traefik.basic.port=80"
+            - "traefik.basic.protocol=http"
+        links:
+          - mysql:mysql-5.7
+networks:
+  web:
+    external: true
