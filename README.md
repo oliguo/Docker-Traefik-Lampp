@@ -46,6 +46,11 @@ sudo systemctl start docker / sudo systemctl stop docker
 sudo systemctl enable docker
 ```
 
+### Restart All Container
+```
+docker restart $(docker ps -q)
+```
+
 # Step 2
 
 ### Download the Git files
