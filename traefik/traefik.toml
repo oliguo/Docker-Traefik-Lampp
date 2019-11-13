@@ -17,6 +17,9 @@ logLevel = "INFO"
     entryPoint = "https"
   [entryPoints.https]
   address = ":443"
+  permanent=true
+  regex = "^https://www.(.*)"
+  replacement = "https://$1"
   [entryPoints.https.tls]
   [[entryPoints.https.tls.certificates]]
       CertFile = "/opt/traefik/certs/*.abc.com/fullchain.pem"
