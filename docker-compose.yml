@@ -65,7 +65,7 @@ services:
         labels:
             - "traefik.docker.network=web"
             - "traefik.enable=true"
-            - "traefik.basic.frontend.rule=Host:abc001.com"
+            - "traefik.basic.frontend.rule=Host:abc001.com,www.abc001.com"
             - "traefik.basic.port=80"
             - "traefik.basic.protocol=http"
         links:
