@@ -18,6 +18,11 @@ services:
             - './traefik/log:/opt/traefik/log'
             - './traefik/rules:/opt/traefik/rules'
         container_name: traefik
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.1'
+                    memory: 100M
     mysql:
         networks:
             - web
@@ -32,6 +37,11 @@ services:
         environment:
             - MYSQL_ROOT_PASSWORD=root
         image: 'mysql:5.7'
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.5'
+                    memory: 300M
     phpmyadmin:
         networks:
             - web
@@ -46,6 +56,11 @@ services:
         image: 'phpmyadmin/phpmyadmin:4.7'
         links:
           - mysql:mysql-5.7
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.1'
+                    memory: 100M
     alpine-apache-php5:
         networks:
             - web
@@ -70,6 +85,11 @@ services:
             - "traefik.basic.protocol=http"
         links:
           - mysql:mysql-5.7
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.2'
+                    memory: 200M
 networks:
   web:
     external: true
