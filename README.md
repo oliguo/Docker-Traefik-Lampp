@@ -258,6 +258,6 @@ rule = "Host:abc002.abc.com"
 
 ```
 cd /opt/Docker
-docker-compose up -d --force-recreate
+docker-compose --compatibility  up -d --force-recreate
 ```
 
