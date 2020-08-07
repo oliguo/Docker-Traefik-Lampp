@@ -88,6 +88,8 @@ RUN cp /usr/bin/php5 /usr/bin/php && \
 
 RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
 
+RUN crond start
+
 RUN rm -f /var/cache/apk/*
 RUN rm -rf /tmp/*
 
