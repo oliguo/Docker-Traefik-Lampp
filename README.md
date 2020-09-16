@@ -31,7 +31,17 @@ apt-get update & apt-get upgrade
 ### Install docker and others library needed
 
 ```
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose apache2-utils
+sudo apt-get install docker-ce docker-ce-cli containerd.io apache2-utils
+```
+
+### Install docker compose
+
+```
+sudo curl -L "https://github.com/docker/compose/releases/download/1.27.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+
+sudo dpkg -r --force-depends golang-docker-credential-helpers
 ```
 
 ### Start / Stop Docker
@@ -56,13 +66,13 @@ docker restart $(docker ps -q)
 ### Download the Git files
 
 ```
-https://github.com/oliguo/Docker-Traefik-Lampp-5
+https://github.com/oliguo/Docker-Traefik-Lampp
 ```
 
 ### Create the root folder for files
 
 ```
-cp -r ./Docker-Traefik-Lampp-5 /opt/Docker
+cp -r ./Docker-Traefik-Lampp /opt/Docker
 ```
 
 # Step 3
@@ -70,9 +80,7 @@ cp -r ./Docker-Traefik-Lampp-5 /opt/Docker
 ### Install container manager tool
 
 ```
-mkdir /opt/Docker/portainer
-
-mkdir /opt/Docker/portainer/data
+mkdir -pv /opt/Docker/portainer/data
 
 docker run -d -p 9000:9000 \
  --name portainer \
@@ -145,6 +153,9 @@ ExtendedLog		/var/log/proftpd/auth.log AUTH auth
 
 ```
 mv /opt/Docker/alpine-apache-php5 /opt/Docker/abc.com
+or
+mv /opt/Docker/alpine-apache-php7 /opt/Docker/abc.com
+
 
 groupadd abc.com
 
@@ -175,6 +186,9 @@ docker network create web
 ```
 cd /opt/Docker/abc.com
 docker build -t alpine-apache-php5 .
+or
+docker build -t alpine-apache-php7 .
+
 ```
 
 ### Edit docker-compose by requirement
@@ -259,5 +273,25 @@ rule = "Host:abc002.abc.com"
 ```
 cd /opt/Docker
 docker-compose --compatibility  up -d --force-recreate
+```
+
+### Change mysql root password
+
+```
+SET PASSWORD FOR 'root' = PASSWORD('your password');
+
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'your password';
+```
+
+### Set password for traefik(v1.7.11) dashbard and update it on the traefik.tml
+
+```
+echo $(htpasswd -nb admin 123456)
+```
+
+```
+[entryPoints.traefik.auth]
+    [entryPoints.traefik.auth.basic]
+      users = ["admin:xxxx"]
 ```
 
