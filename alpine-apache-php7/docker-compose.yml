@@ -1,0 +1,35 @@
+# Standalone reference
+version: '3'
+services:
+    webapp:
+        networks:
+            - web
+        ports:
+            - '8002:80'
+            - '8003:443'
+        container_name: webapp
+        restart: always
+        volumes:
+            - './alpine-apache-php7/www:/var/www/localhost/htdocs'
+            - './alpine-apache-php7/config/apache2/httpd.conf:/etc/apache2/httpd.conf'
+            - './alpine-apache-php7/config/apache2/conf.d:/etc/apache2/conf.d'
+            - './alpine-apache-php7/config/php7/php.ini:/etc/php7/php.ini'
+            - './alpine-apache-php7/log/apache2:/var/log/apache2'
+            - './alpine-apache-php7/log/php7:/var/log/php7'
+        image: alpine-apache-php7
+        labels:
+            - "traefik.docker.network=web"
+            - "traefik.enable=true"
+            - "traefik.basic.frontend.rule=Host:abc001.com,www.abc001.com"
+            - "traefik.basic.port=80"
+            - "traefik.basic.protocol=http"
+        external_links:
+          - mysql:mysql-5.7
+        deploy:
+            resources:
+                limits:
+                    cpus: '1'
+                    memory: 1024M
+networks:
+  web:
+    external: true
