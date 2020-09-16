@@ -1,0 +1,25 @@
+# Standalone reference
+version: '3'
+services:
+    mysql:
+        networks:
+            - web
+        ports:
+            - '3306:3306'
+        container_name: mysql-5.7
+        restart: always
+        volumes:
+            - '/opt/docker/mysql-5.7/data:/var/lib/mysql'
+            - '/opt/docker/mysql-5.7/config/mysql.conf.d:/etc/mysql/mysql.conf.d'
+            - '/opt/docker/mysql-5.7/config/conf.d:/etc/mysql/conf.d'
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+        image: 'mysql:5.7'
+        deploy:
+            resources:
+                limits:
+                    cpus: '3.5'
+                    memory: 4096M
+networks:
+  web:
+    external: true
