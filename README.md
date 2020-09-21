@@ -294,4 +294,20 @@ echo $(htpasswd -nb admin 123456)
     [entryPoints.traefik.auth.basic]
       users = ["admin:xxxx"]
 ```
+### Logging by crontab
 
+```
+crontab -e
+
+##clear traefik log and restart traefik
+0 0 * * 0 rm /where is path/traefik/log/*
+5 0 * * 0 docker restart traefik
+
+##logging the stats per 30mins
+*/30 * * * * docker stats -a --no-stream >> /log folder you created/docker-stats-log/`date +\%Y\%m\%d\%H\%M\%S`.csv
+*/30 * * * * ps auxf > /log folder you created/htop-log/`date +\%Y\%m\%d\%H\%M\%S`.csv
+
+##clear log every sunday
+0 0 * * 0 rm /log folder you created/docker-stats-log/`date +\%Y\%m`*.csv
+0 0 * * 0 rm /log folder you created/htop-log/`date +\%Y\%m`*.csv
+```
