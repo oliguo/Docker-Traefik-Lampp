@@ -72,7 +72,7 @@ https://github.com/oliguo/Docker-Traefik-Lampp
 ### Create the root folder for files
 
 ```
-cp -r ./Docker-Traefik-Lampp /opt/Docker
+cp -r ./Docker-Traefik-Lampp /opt/docker
 ```
 
 # Step 3
@@ -80,13 +80,13 @@ cp -r ./Docker-Traefik-Lampp /opt/Docker
 ### Install container manager tool
 
 ```
-mkdir -pv /opt/Docker/portainer/data
+mkdir -pv /opt/docker/portainer/data
 
 docker run -d -p 9000:9000 \
  --name portainer \
  --restart always \
  -v /var/run/docker.sock:/var/run/docker.sock \
- -v /opt/Docker/portainer/data:/data \
+ -v /opt/docker/portainer/data:/data \
  portainer/portainer
 ```
 
@@ -152,16 +152,16 @@ ExtendedLog		/var/log/proftpd/auth.log AUTH auth
 ### Create FTP User
 
 ```
-mv /opt/Docker/alpine-apache-php5 /opt/Docker/abc.com
+mv /opt/docker/alpine-apache-php5 /opt/docker/abc.com
 or
-mv /opt/Docker/alpine-apache-php7 /opt/Docker/abc.com
+mv /opt/docker/alpine-apache-php7 /opt/docker/abc.com
 
 
 groupadd abc.com
 
-useradd -d /opt/Docker/abc.com/www -g abc.com -s /sbin/nologin abc.com_user
+useradd -d /opt/docker/abc.com/www -g abc.com -s /sbin/nologin abc.com_user
 
-sudo chown -R abc.com_user:abc.com /opt/Docker/abc.com/www
+sudo chown -R abc.com_user:abc.com /opt/docker/abc.com/www
 
 passwd abc.com_user
 ```
@@ -170,7 +170,7 @@ passwd abc.com_user
 
 ```
 #abc.com
-DefaultRoot /opt/Docker/abc.com/www  abc.com
+DefaultRoot /opt/docker/abc.com/www  abc.com
 ```
 
 # Step 5
@@ -184,7 +184,7 @@ docker network create web
 ### Build Web application image
 
 ```
-cd /opt/Docker/abc.com
+cd /opt/docker/abc.com
 docker build -t alpine-apache-php5 .
 or
 docker build -t alpine-apache-php7 .
@@ -194,7 +194,7 @@ docker build -t alpine-apache-php7 .
 ### Edit docker-compose by requirement
 
 ```
-/opt/Docker/docker-compose.yml
+/opt/docker/docker-compose.yml
 ```
 
 ### Modify traefik.toml by requirement
@@ -271,7 +271,7 @@ rule = "Host:abc002.abc.com"
 ### Build and Start all applications by docker-compose
 
 ```
-cd /opt/Docker
+cd /opt/docker
 docker-compose --compatibility  up -d --force-recreate
 ```
 
