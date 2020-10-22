@@ -271,6 +271,7 @@ rule = "Host:abc002.abc.com"
 ### Build and Start all applications by docker-compose
 
 ```
+sudo chmod 600 /opt/docker/traefik/acme.json
 cd /opt/docker
 docker-compose --compatibility  up -d --force-recreate
 ```
