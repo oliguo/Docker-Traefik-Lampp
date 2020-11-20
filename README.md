@@ -311,4 +311,8 @@ crontab -e
 ##clear log every sunday
 0 0 * * 0 rm /log folder you created/docker-stats-log/`date +\%Y\%m`*.csv
 0 0 * * 0 rm /log folder you created/htop-log/`date +\%Y\%m`*.csv
+
+##clear access log last month 
+59 23 1 * * * rm /opt/docker/abc.com/log/apache2/access_log.`date --date="$(date +\%m) -1 month" +\%Y-\%m*`
+59 23 1 * * * rm /opt/docker/abc.com/log/apache2/ssl_access_log.`date --date="$(date +\%m) -1 month" +\%Y-\%m*`
 ```
