@@ -97,7 +97,7 @@ docker run -d -p 9000:9000 \
 ### Install FTP individually for file upload
 
 ```
-sudo apt-get install proftpd
+sudo apt-get install proftpd proftpd-basic
 ```
 
 ### Start / Stop FTP
@@ -116,13 +116,6 @@ sudo systemctl enable proftpd.service
 
 ```
 sudo nano /etc/proftpd/proftpd.conf
-```
-
-### Remove the '#' of lines as below
-
-```
-#PassivePorts 49152 65534
-#RequireValidShell		off
 ```
 
 ### Add the logging under 'SystemLog   /var/log/proftpd/proftpd.log'
@@ -149,29 +142,36 @@ ExtendedLog		/var/log/proftpd/access.log WRITE,READ combinedio-more
 ExtendedLog		/var/log/proftpd/auth.log AUTH auth
 ```
 
-### Create FTP User
+### Create FTP User and restart Proftpd
 
 ```
-mv /opt/docker/alpine-apache-php5 /opt/docker/abc.com
-or
-mv /opt/docker/alpine-apache-php7 /opt/docker/abc.com
+sudo mkdir -pv /opt/docker/apps
+sudo mv /opt/docker/alpine-apache-php5 /opt/docker/apps/abc.com
+    or
+sudo mv /opt/docker/alpine-apache-php7 /opt/docker/apps/abc.com
 
+sudo groupadd abc_com_group
+sudo useradd -d /opt/docker/apps/abc.com/www -g abc_com_group -s /sbin/nologin abc_com
+sudo chown -Rv abc_com:abc_com_group /opt/docker/apps/abc.com/www
 
-groupadd abc.com
+cat /etc/passwd | grep 'abc_com*'
 
-useradd -d /opt/docker/abc.com/www -g abc.com -s /sbin/nologin abc.com_user
+sudo ftpasswd  --passwd --file=/usr/local/proftpd/ftpd.passwd --name=abc_com  --uid=1000 --gid=1000  --home=/opt/docker/apps/abc.com/www  --shell=/sbin/nologin
 
-sudo chown -R abc.com_user:abc.com /opt/docker/abc.com/www
-
-passwd abc.com_user
+sudo vim /etc/proftpd/conf.d/settings.conf
+    DefaultRoot /opt/docker/apps/abc.com/www abc_com_group
+    <Directory "/opt/docker/apps/abc.com/www">
+        <Limit CWD MKD RNFR READ WRITE STOR RETR>
+            DenyAll
+        </Limit>
+        <Limit CWD MKD RNFR READ WRITE STOR RETR>
+            AllowUser abc_com
+        </Limit>
+    </Directory>
+  
+sudo systemctl restart proftpd.service
 ```
 
-### Add the line to proftpd.conf and restart ftp
-
-```
-#abc.com
-DefaultRoot /opt/docker/abc.com/www  abc.com
-```
 
 # Step 5
 
