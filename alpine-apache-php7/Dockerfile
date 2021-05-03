@@ -13,6 +13,7 @@ RUN echo "@edge-main http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk
 	apk update && \
     apk upgrade && \
 	apk add --no-cache \
+	procps \
 	nano \
 	openssl \
 	tzdata \
