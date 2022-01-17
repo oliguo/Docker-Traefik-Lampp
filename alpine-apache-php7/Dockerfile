@@ -82,7 +82,11 @@ RUN echo "@edge-main http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk
     php7-posix \
     php7-zlib \
 	php7-fileinfo \
-	php7-memcached 
+	php7-memcached \
+	libressl-dev \
+	wget \
+	php7-dev \
+	build-base
 
 RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
 
