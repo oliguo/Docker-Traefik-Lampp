@@ -86,7 +86,9 @@ RUN echo "@edge-main http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk
 	libressl-dev \
 	wget \
 	php7-dev \
-	build-base
+	build-base \
+	imagemagick-dev \
+	imagemagick
 
 RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
 
