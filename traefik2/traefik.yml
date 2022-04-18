@@ -1,0 +1,43 @@
+providers:
+  docker: {}
+
+log:
+  filePath: "/opt/traefik/logs/traefik.log"
+  format: json
+  level: INFO
+
+# Configuring a buffer of 100 lines
+accessLog:
+  filePath: "/opt/traefik/logs/access.log"
+  format: json
+  bufferingSize: 100
+
+api:
+  # Dashboard
+  #
+  # Optional
+  # Default: true
+  #
+  dashboard: true
+  #insecure: true
+
+entryPoints:
+  web:
+    address: ":80"
+    #http:
+    #  redirections:
+    #    entryPoint:
+    #      to: websecure
+    #      scheme: https
+
+  websecure:
+    address: ":443"
+
+certificatesResolvers:
+  webResolver:
+    acme:
+      email: abc@abc.com
+      storage: /letsencrypt/acme.json
+      httpChallenge:
+        # used during the challenge
+        entryPoint: web

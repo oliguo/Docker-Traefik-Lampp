@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  traefik2:
+    container_name: traefik2
+    networks:
+      - web
+    # The official v2 Traefik docker image
+    image: traefik:v2.6
+    # Enables the web UI and tells Traefik to listen to docker
+    #command: --api.insecure=true --providers.docker
+    labels:
+      - "traefik.http.routers.traefik2.rule=Host(`traefik-dev.example.com`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+      - "traefik.http.routers.traefik2.service=api@internal"
+      - "traefik.http.routers.traefik2.middlewares=traefik2_auth"
+      #echo $(htpasswd -nB admin) | sed -e s/\\$/\\$\\$/g
+      - "traefik.http.middlewares.traefik2_auth.basicauth.users=admin:xxx"
+      - "traefik.http.routers.traefik2.tls=true"
+      - "traefik.http.routers.traefik2.tls.certresolver=webResolver"
+    ports:
+      # The HTTP port
+      - "80:80"
+      - "443:443"
+      # The Web UI (enabled by --api.insecure=true)
+      #- "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/docker/traefik2/traefik.yml:/etc/traefik/traefik.yml
+      - /opt/docker/traefik2/letsencrypt:/letsencrypt
+      - /opt/docker/traefik2/logs:/opt/traefik/logs
+networks:
+  web:
+    external: true
