@@ -342,7 +342,7 @@ certificatesResolvers:
         entryPoint: web
 ```
 
-#### Set password for traefik(v2.6) dashbard and update it on the docker-compose.yml
+#### Set password for traefik(v2.6) dashbard and update it on the docker-compose.traefik2.yml
 
 ```
 echo $(htpasswd -nb admin 123456)
