@@ -1,0 +1,108 @@
+version: '3'
+services:
+    traefik2:
+        container_name: traefik2
+        networks:
+            - web
+        # The official v2 Traefik docker image
+        image: traefik:v2.6
+        # Enables the web UI and tells Traefik to listen to docker
+        #command: --api.insecure=true --providers.docker
+        labels:
+            - "traefik.http.routers.traefik2.rule=Host(`traefik-dev.example.com`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+            - "traefik.http.routers.traefik2.service=api@internal"
+            - "traefik.http.routers.traefik2.middlewares=traefik2_auth"
+            #echo $(htpasswd -nB admin) | sed -e s/\\$/\\$\\$/g
+            - "traefik.http.middlewares.traefik2_auth.basicauth.users=admin:xxx"
+            - "traefik.http.routers.traefik2.tls=true"
+            - "traefik.http.routers.traefik2.tls.certresolver=webResolver"
+        ports:
+            # The HTTP port
+            - "80:80"
+            - "443:443"
+            # The Web UI (enabled by --api.insecure=true)
+            #- "8080:8080"
+        volumes:
+            # So that Traefik can listen to the Docker events
+            - /var/run/docker.sock:/var/run/docker.sock
+            - /opt/docker/traefik2/traefik.yml:/etc/traefik/traefik.yml
+            - /opt/docker/traefik2/letsencrypt:/letsencrypt
+            - /opt/docker/traefik2/logs:/opt/traefik/logs
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.1'
+                    memory: 100M
+    mysql:
+        networks:
+            - web
+        ports:
+            - '3306:3306'
+        container_name: mysql-5.7
+        restart: always
+        volumes:
+            - './mysql-5.7/data:/var/lib/mysql'
+            - './mysql-5.7/config/mysql.conf.d:/etc/mysql/mysql.conf.d'
+            - './mysql-5.7/config/conf.d:/etc/mysql/conf.d'
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+        image: 'mysql:5.7'
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.5'
+                    memory: 300M
+    phpmyadmin:
+        networks:
+            - web
+        ports:
+            - '9090:80'
+        container_name: phpmyadmin-4.7
+        restart: always
+        environment:
+            - PMA_ARBITRARY=1
+        volumes:
+            - './phpmyadmin-4.7/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php'
+        image: 'phpmyadmin/phpmyadmin:4.7'
+        links:
+          - mysql:mysql-5.7
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.1'
+                    memory: 100M
+    webapp:
+        networks:
+            - web
+        container_name: abc001
+        restart: always
+        volumes:
+            - './alpine-apache-php5/www:/var/www/localhost/htdocs'
+            - './alpine-apache-php5/config/apache2/httpd.conf:/etc/apache2/httpd.conf'
+            - './alpine-apache-php5/config/apache2/conf.d:/etc/apache2/conf.d'
+            - './alpine-apache-php5/config/php5/php.ini:/etc/php5/php.ini'
+            - './alpine-apache-php5/log/apache2:/var/log/apache2'
+            - './alpine-apache-php5/log/php5:/var/log/php5'
+        image: alpine-apache-php5 # or alpine-apache-php7
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.abc001-http.rule=Host(`abc001.com`) || Host(`www.abc001.com`)"
+            - "traefik.http.routers.abc001-http.entrypoints=web"
+            - "traefik.http.routers.abc001-http.service=abc001-http-service"
+            - "traefik.http.services.abc001-http-service.loadbalancer.server.port=80"
+            - "traefik.http.routers.abc001-https.rule=Host(`abc001.com`) || Host(`www.abc001.com`)"
+            - "traefik.http.routers.abc001-https.entrypoints=websecure"
+            - "traefik.http.routers.abc001-https.service=abc001-https-service"
+            - "traefik.http.services.abc001-https-service.loadbalancer.server.port=80"
+            - "traefik.http.routers.abc001-https.tls=true"
+            - "traefik.http.routers.abc001-https.tls.certresolver=webResolver"
+        links:
+          - mysql:mysql-5.7
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.2'
+                    memory: 200M
+networks:
+  web:
+    external: true

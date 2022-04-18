@@ -191,10 +191,16 @@ docker build -t alpine-apache-php7 .
 ### Edit docker-compose by requirement
 
 ```
+#traefik v1 version
 /opt/docker/docker-compose.yml
+Or
+#traefik v2.6 version
+/opt/docker/docker-compose.traefik2.yml
 ```
 
-### Modify traefik.toml by requirement
+## Traefik V1
+
+#### Modify traefik.toml by requirement
 
 ```toml
 defaultEntryPoints = ["https","http"]
@@ -240,7 +246,20 @@ endpoint = "unix:///var/run/docker.sock"
 watch = true
 ```
 
-### Modify redirection rule1.toml by requirement
+#### Set password for traefik(v1.7.11) dashbard and update it on the traefik.tml
+
+```
+echo $(htpasswd -nb admin 123456)
+```
+
+```
+[entryPoints.traefik.auth]
+    [entryPoints.traefik.auth.basic]
+      users = ["admin:xxxx"]
+```
+
+#### Modify redirection rule1.toml by requirement
+
 ```toml
 [backends]
 
@@ -265,7 +284,7 @@ passHostHeader = true
 rule = "Host:abc002.abc.com"
 ```
 
-### Build and Start all applications by docker-compose
+#### Build and Start all applications by docker-compose
 
 ```
 sudo chmod 600 /opt/docker/traefik/acme.json
@@ -273,7 +292,74 @@ cd /opt/docker
 docker-compose --compatibility  up -d --force-recreate
 ```
 
-### Change mysql root password
+## Traefik V2.6
+
+#### Modify traefik.toml by requirement
+
+```yml
+providers:
+  docker: {}
+
+log:
+  filePath: "/opt/traefik/logs/traefik.log"
+  format: json
+  level: INFO
+
+# Configuring a buffer of 100 lines
+accessLog:
+  filePath: "/opt/traefik/logs/access.log"
+  format: json
+  bufferingSize: 100
+
+api:
+  # Dashboard
+  #
+  # Optional
+  # Default: true
+  #
+  dashboard: true
+  #insecure: true
+
+entryPoints:
+  web:
+    address: ":80"
+    #http:
+    #  redirections:
+    #    entryPoint:
+    #      to: websecure
+    #      scheme: https
+
+  websecure:
+    address: ":443"
+
+certificatesResolvers:
+  webResolver:
+    acme:
+      email: abc@abc.com
+      storage: /letsencrypt/acme.json
+      httpChallenge:
+        # used during the challenge
+        entryPoint: web
+```
+
+#### Set password for traefik(v2.6) dashbard and update it on the docker-compose.yml
+
+```
+echo $(htpasswd -nb admin 123456)
+```
+
+```yml
+ - "traefik.http.middlewares.traefik2_auth.basicauth.users=admin:xxx"
+```
+
+#### Build and Start all applications by docker-compose
+
+```
+cd /opt/docker
+docker-compose -f docker-compose.traefik2.yml --compatibility  up -d --force-recreate
+```
+
+# Change mysql root password
 
 ```
 SET PASSWORD FOR 'root' = PASSWORD('your password');
@@ -281,18 +367,8 @@ SET PASSWORD FOR 'root' = PASSWORD('your password');
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'your password';
 ```
 
-### Set password for traefik(v1.7.11) dashbard and update it on the traefik.tml
 
-```
-echo $(htpasswd -nb admin 123456)
-```
-
-```
-[entryPoints.traefik.auth]
-    [entryPoints.traefik.auth.basic]
-      users = ["admin:xxxx"]
-```
-### Logging by crontab
+# Logging by crontab
 
 ```
 crontab -e

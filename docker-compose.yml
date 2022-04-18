@@ -26,8 +26,6 @@ services:
     mysql:
         networks:
             - web
-        ports:
-            - '3306:3306'
         container_name: mysql-5.7
         restart: always
         volumes:

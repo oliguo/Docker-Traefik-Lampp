@@ -1,0 +1,41 @@
+# Standalone reference
+version: '3'
+services:
+    webapp:
+        networks:
+            - web
+        ports:
+            - '8000:80'
+            - '8001:443'
+        container_name: webapp
+        restart: always
+        volumes:
+            - './alpine-apache-php5/www:/var/www/localhost/htdocs'
+            - './alpine-apache-php5/config/apache2/httpd.conf:/etc/apache2/httpd.conf'
+            - './alpine-apache-php5/config/apache2/conf.d:/etc/apache2/conf.d'
+            - './alpine-apache-php5/config/php5/php.ini:/etc/php5/php.ini'
+            - './alpine-apache-php5/log/apache2:/var/log/apache2'
+            - './alpine-apache-php5/log/php5:/var/log/php5'
+        image: alpine-apache-php5
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.webapp-http.rule=Host(`abc001.com`) || Host(`www.abc001.com`)"
+            - "traefik.http.routers.webapp-http.entrypoints=web"
+            - "traefik.http.routers.webapp-http.service=webapp-http-service"
+            - "traefik.http.services.webapp-http-service.loadbalancer.server.port=80"
+            - "traefik.http.routers.webapp-https.rule=Host(`abc001.com`) || Host(`www.abc001.com`)"
+            - "traefik.http.routers.webapp-https.entrypoints=websecure"
+            - "traefik.http.routers.webapp-https.service=webapp-https-service"
+            - "traefik.http.services.webapp-https-service.loadbalancer.server.port=80"
+            - "traefik.http.routers.webapp-https.tls=true"
+            - "traefik.http.routers.webapp-https.tls.certresolver=webResolver"
+        external_links:
+          - mysql:mysql-5.7
+        deploy:
+            resources:
+                limits:
+                    cpus: '1'
+                    memory: 1024M
+networks:
+  web:
+    external: true
