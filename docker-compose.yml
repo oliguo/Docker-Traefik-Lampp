@@ -18,6 +18,8 @@ services:
             - './traefik/log:/opt/traefik/log'
             - './traefik/rules:/opt/traefik/rules'
         container_name: traefik
+        labels:
+            - "traefik.enable=false"
         deploy:
             resources:
                 limits:
@@ -35,6 +37,8 @@ services:
         environment:
             - MYSQL_ROOT_PASSWORD=root
         image: 'mysql:5.7'
+        labels:
+            - "traefik.enable=false"
         deploy:
             resources:
                 limits:
@@ -52,6 +56,8 @@ services:
         volumes:
             - './phpmyadmin-4.7/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php'
         image: 'phpmyadmin/phpmyadmin:4.7'
+        labels:
+            - "traefik.enable=false"
         links:
           - mysql:mysql-5.7
         deploy:
