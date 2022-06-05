@@ -13,8 +13,10 @@ services:
         volumes:
             - '/opt/docker/phpmyadmin-4.7/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php'
         image: 'phpmyadmin/phpmyadmin:4.7'
+        labels:
+            - "traefik.enable=false"
         external_links:
-          - mysql:mysql-5.7
+            - mysql:mysql-5.7
         deploy:
             resources:
                 limits:
