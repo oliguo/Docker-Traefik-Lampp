@@ -7,10 +7,7 @@ LABEL maintainer.email="oli.zd.guo@gmail.com"
 COPY crontab.conf /opt/crontab.conf
 COPY entry.sh /opt/entry.sh
 
-RUN echo "@edge-main http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories && \
-	echo "@edge-community http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
-	echo "@edge-testing http://dl-4.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
-	apk update && \
+RUN apk update && \
     apk upgrade && \
 	apk add --no-cache \
 	procps \
