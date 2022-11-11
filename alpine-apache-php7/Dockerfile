@@ -1,4 +1,4 @@
-FROM alpine:3.12
+FROM alpine:3.15
 
 LABEL org.label-schema.name="alpine-apache-php7"
 LABEL maintainer.name="Oliver Guo"
@@ -10,8 +10,11 @@ COPY entry.sh /opt/entry.sh
 RUN apk update && \
     apk upgrade && \
 	apk add --no-cache \
-	procps \
 	nano \
+	autoconf \
+	make \
+	g++ \
+	unixodbc-dev \
 	openssl \
 	tzdata \
 	openntpd \
@@ -24,6 +27,7 @@ RUN apk update && \
 	apache2-error \
 	php7-apache2 \
 	php7 \
+	php7-dev \
 	php7-phar \
 	php7-json \
 	php7-iconv \
@@ -62,7 +66,6 @@ RUN apk update && \
 	php7-exif \
 	php7-imap \
 	php7-pspell \
-	php7-recode \
 	php7-tidy \
 	php7-xsl \
 	php7-imagick \
@@ -78,14 +81,11 @@ RUN apk update && \
     php7-opcache \
     php7-posix \
     php7-zlib \
-	php7-fileinfo \
-	php7-memcached \
-	libressl-dev \
-	wget \
-	php7-dev \
-	build-base \
-	imagemagick-dev \
-	imagemagick
+	php7-fileinfo
+	
+RUN pecl install sqlsrv \
+	pecl install pdo_sqlsrv
+
 
 RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
 
