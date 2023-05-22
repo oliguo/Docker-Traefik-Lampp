@@ -81,11 +81,16 @@ RUN apk update && \
     php7-opcache \
     php7-posix \
     php7-zlib \
-	php7-fileinfo
+	php7-fileinfo \
+	php7-dev \
+	gcc \
+	musl-dev \
+	make
 	
-RUN pecl install sqlsrv \
-	pecl install pdo_sqlsrv
-
+RUN pecl channel-update pecl.php.net
+RUN pecl install sqlsrv-5.10.1 \
+	pecl install pdo_sqlsrv-5.10.1 \
+	pecel install mongodb
 
 RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
 
