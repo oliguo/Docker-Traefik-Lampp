@@ -11,11 +11,8 @@ RUN apk update && \
     apk upgrade && \
 	apk add --no-cache \
 	nano \
-	autoconf \
-	make \
-	g++ \
-	unixodbc-dev \
 	openssl \
+	openssl-dev \
 	tzdata \
 	openntpd \
 	curl \
@@ -27,7 +24,6 @@ RUN apk update && \
 	apache2-error \
 	php7-apache2 \
 	php7 \
-	php7-dev \
 	php7-phar \
 	php7-json \
 	php7-iconv \
@@ -85,12 +81,13 @@ RUN apk update && \
 	php7-dev \
 	gcc \
 	musl-dev \
-	make
-	
+	make \
+	redis \
+	gnupg \
+	openrc
+
 RUN pecl channel-update pecl.php.net
-RUN pecl install sqlsrv-5.10.1 \
-	pecl install pdo_sqlsrv-5.10.1 \
-	pecel install mongodb
+RUN pecl install mongodb
 
 RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
 
