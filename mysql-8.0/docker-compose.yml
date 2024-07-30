@@ -1,0 +1,23 @@
+version: "3"
+services:
+  mysql8:
+    networks:
+      - web
+    container_name: mysql-8.0
+    restart: always
+    volumes:
+      - "./data:/var/lib/mysql"
+      - "./config/conf.d:/etc/mysql/conf.d"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    image: "mysql:8.0"
+    labels:
+      - "traefik.enable=false"
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1024M
+networks:
+  web:
+    external: true
