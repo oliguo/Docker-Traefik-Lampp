@@ -1,0 +1,28 @@
+version: "3"
+services:
+  phpmyadmin:
+    networks:
+      - web
+    ports:
+      - "8900:80"
+    container_name: phpmyadmin-5.2
+    restart: always
+    environment:
+      - PMA_ARBITRARY=1
+      - UPLOAD_LIMIT=300M
+    volumes:
+      - "./phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php"
+    image: "phpmyadmin/phpmyadmin:5.2"
+    external_links:
+      - mysql:mysql-5.7
+      - mysql8:mysql-8.0
+      - mysql9:mysql-9.0
+      - mariadb10:mariadb-10
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 1024M
+networks:
+  web:
+    external: true
