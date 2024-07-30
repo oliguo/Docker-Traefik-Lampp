@@ -1,0 +1,25 @@
+version: "3"
+services:
+  mariadb10:
+    networks:
+      - web
+    container_name: mariadb-10
+    restart: always
+    volumes:
+      - "./data:/var/lib/mysql"
+      - "./config/my.cnf:/etc/mysql/my.cnf"
+      - "./config/mariadb.cnf:/etc/mysql/mariadb.cnf"
+      - "./config/mariadb.conf.d:/etc/mysql/mariadb.conf.d"
+    environment:
+      - MARIADB_ROOT_PASSWORD=root
+    labels:
+      - "traefik.enable=false"
+    image: "mariadb:10.4.34"
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1024M
+networks:
+  web:
+    external: true
