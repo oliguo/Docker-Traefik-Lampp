@@ -1,11 +1,10 @@
-version: '3'
 services:
-    traefik2:
-        container_name: traefik2
+    traefik3:
+        container_name: traefik3
         networks:
             - web
-        # The official v2 Traefik docker image
-        image: traefik:v2.6
+        # The official v3 Traefik docker image
+        image: traefik:v3.0
         # Enables the web UI and tells Traefik to listen to docker
         #command: --api.insecure=true --providers.docker
         labels:
