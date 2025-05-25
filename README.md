@@ -1,6 +1,6 @@
 # Step 1
 
-### Run update and upgrade firstly when new ubuntu[18.04] created
+### Run update and upgrade firstly when new ubuntu[24.04] created
 
 ```
 apt-get update & apt-get upgrade
@@ -34,11 +34,11 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io apache2-utils
 ### Install docker compose
 
 ```
-sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
-
-sudo dpkg -r --force-depends golang-docker-credential-helpers
+DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+mkdir -p $DOCKER_CONFIG/cli-plugins
+curl -SL https://github.com/docker/compose/releases/download/v2.36.0/docker compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker compose
+sudo chmod +x $DOCKER_CONFIG/cli-plugins/docker compose
+docker compose version
 ```
 
 ### Start / Stop Docker
@@ -185,17 +185,21 @@ cd /opt/docker/abc.com
 docker build -t alpine-apache-php5 .
 or
 docker build -t alpine-apache-php7 .
+or
+docker build -t alpine-apache-php8 .
 
 ```
 
-### Edit docker-compose by requirement
+### Edit docker compose by requirement
 
 ```
 #traefik v1 version
-/opt/docker/docker-compose.yml
+/opt/docker/docker compose.yml
 Or
-#traefik v2.6 version
-/opt/docker/docker-compose.traefik2.yml
+#traefik V3 version
+/opt/docker/docker compose.traefik2.yml
+#traefik v3 version
+/opt/docker/docker compose.traefik3.yml
 ```
 
 ## Traefik V1
@@ -284,15 +288,15 @@ passHostHeader = true
 rule = "Host:abc002.abc.com"
 ```
 
-#### Build and Start all applications by docker-compose
+#### Build and Start all applications by docker compose
 
 ```
 sudo chmod 600 /opt/docker/traefik/acme.json
 cd /opt/docker
-docker-compose --compatibility  up -d --force-recreate
+docker compose --compatibility  up -d --force-recreate
 ```
 
-## Traefik V2.6
+## Traefik V3
 
 #### Modify traefik.toml by requirement
 
@@ -342,7 +346,7 @@ certificatesResolvers:
         entryPoint: web
 ```
 
-#### Set password for traefik(v2.6) dashbard and update it on the docker-compose.traefik2.yml
+#### Set password for traefik(V3) dashbard and update it on the docker compose.traefik2.yml
 
 ```
 echo $(htpasswd -nb admin 123456)
@@ -352,11 +356,11 @@ echo $(htpasswd -nb admin 123456)
  - "traefik.http.middlewares.traefik2_auth.basicauth.users=admin:xxx"
 ```
 
-#### Build and Start all applications by docker-compose
+#### Build and Start all applications by docker compose
 
 ```
 cd /opt/docker
-docker-compose -f docker-compose.traefik2.yml --compatibility  up -d --force-recreate
+docker compose -f docker compose.traefik2.yml --compatibility  up -d --force-recreate
 ```
 
 # Change mysql root password
