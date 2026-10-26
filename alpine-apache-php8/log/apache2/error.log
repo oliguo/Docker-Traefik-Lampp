@@ -1,0 +1,3 @@
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 172.20.0.2. Set the 'ServerName' directive globally to suppress this message
+[Thu Oct 22 03:13:08.722150 2026] [mpm_prefork:notice] [pid 12:tid 12] AH00163: Apache/2.4.69 (Unix) PHP/8.5.12 OpenSSL/3.5.9 configured -- resuming normal operations
+[Thu Oct 22 03:13:08.722497 2026] [core:notice] [pid 12:tid 12] AH00094: Command line: '/usr/sbin/httpd -D FOREGROUND'

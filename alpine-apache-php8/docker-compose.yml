@@ -7,11 +7,10 @@ services:
         restart: always
         volumes:
             - './alpine-apache-php8/www:/var/www/localhost/htdocs'
-            - './alpine-apache-php8/config/apache2/httpd.conf:/etc/apache2/httpd.conf'
-            - './alpine-apache-php8/config/apache2/conf.d:/etc/apache2/conf.d'
-            - './alpine-apache-php8/config/php83/php.ini:/etc/php83/php.ini'
+            - './alpine-apache-php8/config/apache2:/etc/apache2'
+            - './alpine-apache-php8/config/php85:/etc/php85'
             - './alpine-apache-php8/log/apache2:/var/log/apache2'
-            - './alpine-apache-php8/log/php83:/var/log/php83'
+            - './alpine-apache-php8/log/php85:/var/log/php85'
         image: alpine-apache-php8
         labels:
             - "traefik.enable=true"

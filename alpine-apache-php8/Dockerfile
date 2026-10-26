@@ -1,6 +1,6 @@
-FROM alpine:3.21
+FROM alpine:3.22
 
-LABEL org.label-schema.name="alpine-apache-php8.3"
+LABEL org.label-schema.name="alpine-apache-php8.5"
 LABEL maintainer.name="Oliver Guo"
 LABEL maintainer.email="oli.zd.guo@gmail.com"
 
@@ -9,88 +9,92 @@ COPY entry.sh /opt/entry.sh
 
 RUN apk update && \
     apk upgrade && \
-	apk add --no-cache \
-	ffmpeg \
-	nano \
-	openssl \
-	openssl-dev \
-	tzdata \
-	openntpd \
-	curl \
-	ca-certificates \
-	git \
-	gcc \
-	musl-dev \
-	make \
-	redis \
-	gnupg \
-	openrc \
-	apache2 \
+    apk add --no-cache \
+    --repository=https://dl-cdn.alpinelinux.org/alpine/edge/main \
+    --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community \
+    ffmpeg \
+    nano \
+    openssl \
+    openssl-dev \
+    tzdata \
+    openntpd \
+    curl \
+    ca-certificates \
+    git \
+    gcc \
+    musl-dev \
+    make \
+    redis \
+    gnupg \
+    openrc \
+    apache2 \
     apache2-ssl \
     apache2-utils \
-	apache2-error \
-	php83-apache2 \
-	php83 \
-	php83-phar \
-	php83-json \
-	php83-iconv \
-	php83-openssl \
-	php83-curl \
-	php83-intl \
-	php83-ftp \
-	php83-xdebug \
-	php83-mbstring \
-	php83-soap \
-	php83-gmp \
-	php83-pdo_odbc \
-	php83-dom \
-	php83-pdo \
-	php83-zip \
-	php83-mysqli \
-	php83-sqlite3 \
-	php83-pdo_pgsql \
-	php83-bcmath \
-	php83-gd \
-	php83-odbc \
-	php83-pdo_mysql \
-	php83-pdo_sqlite \
-	php83-gettext \
-	php83-xmlreader \
-	php83-xmlwriter \
-	php83-tokenizer \
-	php83-bz2 \
-	php83-pdo_dblib \
-	php83-curl \
-	php83-ctype \
-	php83-session \
-	php83-redis \
-	php83-exif \
-	php83-imap \
-	php83-pspell \
-	php83-tidy \
-	php83-xsl \
-	php83-pear \
-	php83-gettext \
-	php83-apcu \
-	php83-simplexml \
-    php83-mysqlnd \
-    php83-xml \
-    php83-enchant \
-    php83-bcmath \
-    php83-sysvsem \
-    php83-opcache \
-    php83-posix \
-    php83-zlib \
-	php83-fileinfo \
-	php83-dev \
-	php83-pecl-imagick \
-	php83-pecl-imagick-dev \
-	php83-sodium
-	
-RUN pecl channel-update pecl.php.net
-RUN pecl install mongodb
+    apache2-error \
+    imap-dev \
+    krb5-dev \
+    aspell-dev \
+    php85-apache2 \
+    php85 \
+    php85-phar \
+    php85-json \
+    php85-iconv \
+    php85-openssl \
+    php85-curl \
+    php85-intl \
+    php85-ftp \
+    php85-xdebug \
+    php85-mbstring \
+    php85-soap \
+    php85-gmp \
+    php85-pdo_odbc \
+    php85-dom \
+    php85-pdo \
+    php85-zip \
+    php85-mysqli \
+    php85-sqlite3 \
+    php85-pdo_pgsql \
+    php85-bcmath \
+    php85-gd \
+    php85-odbc \
+    php85-pdo_mysql \
+    php85-pdo_sqlite \
+    php85-gettext \
+    php85-xmlreader \
+    php85-xmlwriter \
+    php85-tokenizer \
+    php85-bz2 \
+    php85-pdo_dblib \
+    php85-ctype \
+    php85-session \
+    php85-redis \
+    php85-exif \
+    php85-tidy \
+    php85-xsl \
+    php85-pear \
+    php85-apcu \
+    php85-simplexml \
+    php85-mysqlnd \
+    php85-xml \
+    php85-enchant \
+    php85-sysvsem \
+    php85-posix \
+    php85-zlib \
+    php85-fileinfo \
+    php85-dev \
+    php85-pecl-imagick \
+    php85-pecl-imagick-dev \
+    php85-sodium
 
-RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
+# 為了避免 PECL 安裝 imap 時卡在詢問 (prompt) 環節，這裡可以加上 yes 指令自動同意預設選項
+RUN pecl85 channel-update pecl.php.net
+RUN pecl85 install mongodb
+RUN yes "" | pecl85 install imap pspell
+RUN echo "extension=imap.so" > /etc/php85/conf.d/imap.ini
+RUN echo "extension=pspell.so" > /etc/php85/conf.d/pspell.ini
+RUN echo "extension=mongodb.so" > /etc/php85/conf.d/mongodb.ini
+
+RUN COMPOSER_IPRESOLVE=4 curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
 
 RUN crond start
 
